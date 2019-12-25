@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <h2 class="mb-3">Дороги Забайкальского края :</h2><hr>
+
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h5>Количество :</h5>
+        <span class="badge badge-secondary badge-pill">{{ nroad__count }}</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h5>Протяженность :</h5>
+        <span class="badge badge-secondary badge-pill">{{ lroad__sum }} км</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h5>Балансовая стоимость :</h5>
+        <span class="badge badge-secondary badge-pill">{{ broad__sum }} руб.</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <h5>Остаточная стоимисть на ({{ date__today }}):</h5>
+        <span class="badge badge-secondary badge-pill">{{ oroad__sum }} руб.</span>
+      </li>
+    </ul>
+
+
+
+{% endblock content %}
+
