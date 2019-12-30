@@ -9,13 +9,13 @@ from django.views.generic.base import View
 from .models import Reestr
 
 
-class RoadInfoView(View):
+class ReestrInfoView(View):
     """Сводная информация на главной странице"""
 
     # def get(self, request, *args, **kwargs):
     @staticmethod
     def get(request):
-        info = Reestr.objects.all().aggregate(Count('id', distinct=True), Sum('c_contract'))
+        info = Reestr.objects.all().filter(work_contract=True).aggregate(Count('id', distinct=True), Sum('c_contract'))
         qs = Reestr.objects.all().filter(work_contract=True)
         d_today = datetime.date.today()
         summ_ost = 0
@@ -26,10 +26,27 @@ class RoadInfoView(View):
         return render(request, 'index.html', context=info)
 
 
-class RoadListView(ListView):
+class ReestrListView(ListView):
     """Перечень дорог для просмотра"""
     model = Reestr
     queryset = Reestr.objects.all().filter(work_contract=True)
     template_name = 'reestr/cotract_list.html'
     paginate_by = 10
-# Create your views here.
+
+
+class ReestrDetail(DetailView):
+    """Информация о контракте"""
+
+    model = Reestr
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            @staticmethod
+            def get(request):
+                info = Reestr.objects.all()
+                d_today = datetime.date.today()
+                return render(request, 'road_detail.html', context=info)
+
+            return Reestr.objects.all()
+        else:
+            return Reestr.objects.none()
