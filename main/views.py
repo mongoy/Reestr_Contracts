@@ -30,7 +30,7 @@ class ReestrListView(ListView):
     """Перечень дорог для просмотра"""
     model = Reestr
     queryset = Reestr.objects.all().filter(work_contract=True)
-    template_name = 'reestr/cotract_list.html'
+    template_name = 'main/cotract_list.html'
     paginate_by = 10
 
 
@@ -45,7 +45,7 @@ class ReestrDetail(DetailView):
             def get(request):
                 info = Reestr.objects.all()
                 d_today = datetime.date.today()
-                return render(request, 'road_detail.html', context=info)
+                return render(request, 'main/reestr_detail.html', context=info)
 
             return Reestr.objects.all()
         else:

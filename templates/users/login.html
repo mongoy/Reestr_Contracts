@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{%  block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottum mb-4">Вход :</legend>
+                <input type="hidden" name="next" value="{{ next }}">
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Вход</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Нужен новый аккаунт? <a class="ml-2" href="#">Создать</a>
+            </small>
+        </div>
+    </div>
+
+{% endblock content %}
