@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1 class="mb-3">Государственный контракт: {{ reestr.num_contract }}</h1>
+        <div class="card mb-1">
+
+            <p class="card-header"><strong>Наименование объекта : &nbsp; {{ reestr.name_object }}</strong></p>
+            <p class="card-header"><strong>Подрядчик : &nbsp; {{ reestr.uch_contract }} </strong></p>
+            <p class="card-header"><strong>Дата начала работ : &nbsp; {{ reestr.in_work }} г.</strong></p>
+            <p class="card-header"><strong>Дата окончания работ : &nbsp; {{ reestr.out_work }} г.</strong></p>
+
+            <br>
+            <p class="card-header"><strong>по состоянию на {{ d_today }} </strong></p>
+{% comment %}            <p class="card-header">&nbsp;&nbsp;&nbsp; Балансовая : {{ road.broad }} руб. </p>
+            <p class="card-header">&nbsp;&nbsp;&nbsp; Остаточная : {{ summ_ost }} руб. </p>
+{% endcomment %}
+        </div><br><hr>
+    <div class="card-header">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-2"><a href="#" class="btn btn-sm btn-outline-info my-2 my-sm-0" aria-disabled="true">Показатели контракта</a></div>
+            <div class="col-3"><a href="{% url 'contract-list' %}" class="btn btn-outline-success my-1 my-sm-0" aria-disabled="true">Перечень контрактов</a></div>
+        </div>
+    </div>
+{% endblock content %}
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>qqqq</title>
+</head>
+<body>
+
+</body>
+</html>-->

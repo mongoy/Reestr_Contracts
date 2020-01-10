@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-3">Перечень контрактов :</h2><hr>
+    {% for contract in reestr_list %}
+        <div class="card-header">
+            <div class="row">
+                <div class="col-10" ><h6> № {{ contract.num_contract }}  ,  Цена: {{ contract.c_contract}}</h6></div>
+                {% if user.is_authenticated %}
+                    <div class="col-3"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-2"><a href="{% url 'pdf-view' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">ПДФ</a></div>
+                    <div class="col-1"><a href="#" class="btn btn-sm btn-outline-danger my-2 my-sm-0" role="group" aria-disabled="true">Изменить</a></div>
+                {% else %}
+                    <div class="col-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-1"></div>
+                {% endif %}
+
+            </div>
+        </div>
+
+     {% empty %}
+        <h1>Список пуст!</h1>
+    {% endfor %}
+
+    {% block pagination %}
+    {% endblock pagination%}
+
+{% endblock content %}
