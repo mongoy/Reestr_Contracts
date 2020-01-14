@@ -17,9 +17,7 @@ from django.http import FileResponse, Http404
 
 
 class ReestrInfoView(View):
-    """
-        Сводная информация на главной странице
-    """
+    """ Сводная информация на главной странице """
 
     # def get(self, request, *args, **kwargs):
     @staticmethod
@@ -36,9 +34,7 @@ class ReestrInfoView(View):
 
 
 class ReestrListView(ListView):
-    """
-        Перечень дорог для просмотра
-    """
+    """ Перечень дорог для просмотра """
     model = Reestr
     queryset = Reestr.objects.all().filter(work_contract=True)
     template_name = 'main/cotract_list.html'
@@ -46,9 +42,7 @@ class ReestrListView(ListView):
 
 
 class ReestrDetail(DetailView):
-    """
-        Информация о контракте
-    """
+    """ Информация о контракте """
     model = Reestr
 
     # template_name = 'main/contract_detail.html'
@@ -71,28 +65,17 @@ class ReestrDetail(DetailView):
         return context
 
 
-class DisplayPDFView(View):
-    """
-        Вывод PDF файла сонтракта на экран
-    """
-
-    def get_context_data(self, **kwargs):  # Exec 1st
-        context = {}
-        # context logic here
-        return context
-
+class DisplayPdfView(BaseDetailView):
+    """ Вывод на экран скана контракта в формате PDF"""
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        base_path = os.path.join(os.path.join(settings.BASE_DIR, "files"), '2019')
-        # base_path = os.path.join(os.path.join(os.path.dirname(settings.BASE_DIR), "files"), '2019')
-        path = os.path.join(base_path, '2019.1.pdf')
-
-        with open(path, 'rb') as pdf_f:
-            response = HttpResponse(pdf_f.read(), content_type='application/pdf')
-            response['Content-Disposition'] = 'filename="2019.1.pdf"'
-        pdf_f.closed
-
+        objkey = self.kwargs.get('pk', None)  # обращение к именованному аргументу pk, переданному по URL-адресу, вызывающему представление
+        pdf = get_object_or_404(Reestr, id=objkey)  # Эта строка получает фактический объект модели pdf
+        fname = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
+        path = os.path.join(settings.MEDIA_ROOT, fname)  # полный путь к файлу
+        response = FileResponse(open(path, 'rb'), content_type="application/pdf")
+        response["Content-Disposition"] = "filename={}".format(fname)
         return response
+
 
 
 
