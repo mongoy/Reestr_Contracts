@@ -8,29 +8,32 @@
             <p class="card-header"><strong>Подрядчик : &nbsp; {{ reestr.uch_contract }} </strong></p>
             <p class="card-header"><strong>Дата начала работ : &nbsp; {{ reestr.in_work }} г.</strong></p>
             <p class="card-header"><strong>Дата окончания работ : &nbsp; {{ reestr.out_work }} г.</strong></p>
+            <p class="card-header"><strong>Дополнительные соглашения :</strong></p>
+            {% for dop in dops %}
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6" >
+                            <h6> {{ dop.num_contract }} </h6>
+                        </div>
 
+                    </div>
+                </div>
+            {% empty %}
+                <h1>Список пуст!</h1>
+            {% endfor %}
             <br>
             <p class="card-header"><strong>по состоянию на {{ d_today }} </strong></p>
+            <br>
+
 {% comment %}            <p class="card-header">&nbsp;&nbsp;&nbsp; Балансовая : {{ road.broad }} руб. </p>
             <p class="card-header">&nbsp;&nbsp;&nbsp; Остаточная : {{ summ_ost }} руб. </p>
 {% endcomment %}
         </div><br><hr>
     <div class="card-header">
         <div class="row">
-            <div class="col-1"></div>
-            <div class="col-2"><a href="#" class="btn btn-sm btn-outline-info my-2 my-sm-0" aria-disabled="true">Показатели контракта</a></div>
-            <div class="col-3"><a href="{% url 'contract-list' %}" class="btn btn-outline-success my-1 my-sm-0" aria-disabled="true">Перечень контрактов</a></div>
+            <div class="col-md-4"><a href="#" class="btn btn-sm btn-outline-info my-2 my-sm-0" aria-disabled="true">Показатели контракта</a></div>
+            <div class="col-md-4"><a href="{% url 'contract-dop-list' %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" aria-disabled="true">Дополнительные соглашения</a></div>
+            <div class="col-md-4"><a href="{% url 'contract-list' %}" class="btn btn-outline-success my-2 my-sm-0" aria-disabled="true">Перечень контрактов</a></div>
         </div>
     </div>
 {% endblock content %}
-
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>qqqq</title>
-</head>
-<body>
-
-</body>
-</html>-->

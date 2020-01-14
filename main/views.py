@@ -15,15 +15,15 @@ from .models import Reestr
 from django.http import FileResponse, Http404
 
 
-
 class ReestrInfoView(View):
     """ Сводная информация на главной странице """
 
     # def get(self, request, *args, **kwargs):
     @staticmethod
     def get(request):
-        info = Reestr.objects.all().filter(work_contract=True).aggregate(Count('id', distinct=True), Sum('c_contract'))
-        qs = Reestr.objects.all().filter(work_contract=True)
+        # рабочие контракты без допов
+        info = Reestr.objects.all().filter(work_contract=True, type_doc=1).aggregate(Count('id', distinct=True), Sum('c_contract'))
+        qs = Reestr.objects.all().filter(work_contract=True, type_doc=1)
         d_today = datetime.date.today()
         summ_ost = 0
         for rw in qs:
@@ -36,7 +36,8 @@ class ReestrInfoView(View):
 class ReestrListView(ListView):
     """ Перечень дорог для просмотра """
     model = Reestr
-    queryset = Reestr.objects.all().filter(work_contract=True)
+    # рабочие контракты без допов
+    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=1)
     template_name = 'main/cotract_list.html'
     paginate_by = 10
 
@@ -57,7 +58,9 @@ class ReestrDetail(DetailView):
         # am_month = ammort(period, broad)
         # summ_ost = oroad - am_month * d_today.month
         context['summ_ost'] = 666
-        # context['elements'] = ElRoad.objects.filter(nroad=Road).filter(nregion=Road)
+        objkey = self.kwargs.get('pk', None)
+        c_num = Reestr.objects.filter(work_contract=True, type_doc=1, id=objkey)
+        context['dops'] = Reestr.objects.filter(work_contract=True, type_doc=2, num_contract=c_num)
         # if self.request.user.is_authenticated:
         #     return context
         # else:
@@ -77,5 +80,11 @@ class DisplayPdfView(BaseDetailView):
         return response
 
 
+class ContractDopListView(ListView):
+    """ Перечень дополнительных соглашений к контрактам """
+    model = Reestr
+
+    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
+    template_name = 'main/contract_dop_list.html'
 
 
