@@ -10,11 +10,11 @@
                     <h6> {{ contract.name_object }} </h6>
                 </div>
                 {% if user.is_authenticated %}
-                    <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
-                    <div class="col-md-2"><a href="{% url 'pdf-view' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">ПДФ</a></div>
+                    <div class="col-md-2"><a href="{% url 'dop-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-md-2"><a href="{% url 'dop-pdf-view' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">ПДФ</a></div>
                     <div class="col-md-2"><a href="#" class="btn btn-sm btn-outline-danger my-2 my-sm-0" role="group" aria-disabled="true">Изменить</a></div>
                 {% else %}
-                    <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-md-2"><a href="{% url 'dop-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
                     <div class="col-md-2"></div>
                 {% endif %}
 

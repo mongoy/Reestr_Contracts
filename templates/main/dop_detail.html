@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1 class="mb-3">Дополнительное соглашение к ГК: </h1>
+        <p>№ {{ reestr.num_contract }}</p>
+        <div class="card mb-1">
+
+            <p class="card-header"><strong>Наименование объекта : &nbsp; {{ reestr.name_object }}</strong></p>
+            <p class="card-header"><strong>Подрядчик : &nbsp; {{ reestr.uch_contract }} </strong></p>
+            <p class="card-header"><strong>Дата начала работ : &nbsp; {{ reestr.in_work }} г.</strong></p>
+            <p class="card-header"><strong>Дата окончания работ : &nbsp; {{ reestr.out_work }} г.</strong></p>
+            <p class="card-header"><strong>Дополнительные соглашения :</strong></p>
+
+        </div><br><hr>
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-4"><a href="{% url 'contract-list' %}" class="btn btn-outline-success my-2 my-sm-0" aria-disabled="true">Назад</a></div>
+        </div>
+    </div>
+{% endblock content %}

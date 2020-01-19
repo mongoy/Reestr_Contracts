@@ -50,7 +50,7 @@ class DopSListView(ListView):
     # рабочие допы
     queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
     template_name = 'main/dop_list.html'
-    paginate_by = 2
+    paginate_by = 5
 
 
 class ContractDetail(DetailView):
@@ -102,12 +102,16 @@ class ContractDopListView(ListView):
     paginate_by = 10
 
 
-class ContractDopDetail(DetailView):
-    """ Информация о контракте """
+class DopDetail(DetailView):
+    """ Информация о допе """
     model = Reestr
+    template_name = 'main/dop_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        objkey = self.kwargs.get('pk', None)
+        c_num = Reestr.objects.filter(work_contract=True, type_doc=2, id=objkey)
+        context['num_gk'] = c_num[:5]
         d_today = datetime.date.today()
         context['d_today'] = d_today
         return context
