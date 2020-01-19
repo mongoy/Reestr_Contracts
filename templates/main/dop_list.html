@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-3">Перечень дополнительных соглашений :</h2><hr>
+    {% for contract in reestr_list %}
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6" >
+                    <h6> № {{ contract.num_contract }}  ,  Цена: {{ contract.c_contract}}</h6><br>
+                    <h6> {{ contract.name_object }} </h6>
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-md-2"><a href="{% url 'pdf-view' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">ПДФ</a></div>
+                    <div class="col-md-2"><a href="#" class="btn btn-sm btn-outline-danger my-2 my-sm-0" role="group" aria-disabled="true">Изменить</a></div>
+                {% else %}
+                    <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                    <div class="col-md-2"></div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    {% empty %}
+        <h1>Список пуст!</h1>
+    {% endfor %}
+
+    {% block pagination %}
+
+    {% if is_paginated %}
+        <br>
+        <div class="pagination">
+            <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+                </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Следующая &raquo;</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+            {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    {% endblock pagination%}
+
+{% endblock content %}

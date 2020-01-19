@@ -26,6 +26,9 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contract-list' %}">Перечень контрактов</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'dop-list' %}">Перечень допов</a>
+          </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="#">Редактор</a>
@@ -62,7 +65,7 @@
             </div>{% endcomment %}
             <div class="col-lg-10">
                 {% block content %}
-                    <h1>Пустой контент</h1>
+                    <h1>Пустой контент!!!</h1>
                     {% block pagination %}
 
                     {% endblock pagination%}

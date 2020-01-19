@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <h1 class="mb-3">Государственный контракт: {{ reestr.num_contract }}</h1>
+    <h1 class="mb-3">Государственный контракт: № &nbsp;{{ reestr.num_contract }}</h1>
         <div class="card mb-1">
 
             <p class="card-header"><strong>Наименование объекта : &nbsp; {{ reestr.name_object }}</strong></p>
@@ -9,11 +9,11 @@
             <p class="card-header"><strong>Дата начала работ : &nbsp; {{ reestr.in_work }} г.</strong></p>
             <p class="card-header"><strong>Дата окончания работ : &nbsp; {{ reestr.out_work }} г.</strong></p>
             <p class="card-header"><strong>Дополнительные соглашения :</strong></p>
-            {% for dop in dops %}
+{% comment %}             {% for dop in dops %}
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-6" >
-                            <h6> {{ dop.num_contract }} </h6>
+                            <h6></h6>
                         </div>
 
                     </div>

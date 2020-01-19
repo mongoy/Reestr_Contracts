@@ -5,17 +5,19 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Sum, Count
-from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, DetailView, UpdateView, CreateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.views.generic.base import View
 from django.views.generic.detail import BaseDetailView
+# пагинация
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, get_object_or_404
 
 from .models import Reestr
 from django.http import FileResponse, Http404
 
 
-class ReestrInfoView(View):
+class ContractsInfoView(View):
     """ Сводная информация на главной странице """
 
     # def get(self, request, *args, **kwargs):
@@ -28,25 +30,32 @@ class ReestrInfoView(View):
         summ_ost = 0
         for rw in qs:
             summ_ost += rw.c_contract
-        info['oroad__sum'] = summ_ost
+        info['ogk__sum'] = summ_ost
         info['date__today'] = d_today
         return render(request, 'index.html', context=info)
 
 
-class ReestrListView(ListView):
-    """ Перечень дорог для просмотра """
+class ContractsListView(ListView):
+    """ Перечень контрактов для просмотра """
     model = Reestr
     # рабочие контракты без допов
     queryset = Reestr.objects.all().filter(work_contract=True, type_doc=1)
-    template_name = 'main/cotract_list.html'
-    paginate_by = 10
+    template_name = 'main/contract_list.html'
+    paginate_by = 2
 
 
-class ReestrDetail(DetailView):
+class DopSListView(ListView):
+    """ Перечень допов для просмотра """
+    model = Reestr
+    # рабочие допы
+    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
+    template_name = 'main/dop_list.html'
+    paginate_by = 2
+
+
+class ContractDetail(DetailView):
     """ Информация о контракте """
     model = Reestr
-
-    # template_name = 'main/contract_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -71,12 +80,16 @@ class ReestrDetail(DetailView):
 class DisplayPdfView(BaseDetailView):
     """ Вывод на экран скана контракта в формате PDF"""
     def get(self, request, *args, **kwargs):
-        objkey = self.kwargs.get('pk', None)  # обращение к именованному аргументу pk, переданному по URL-адресу, вызывающему представление
+        objkey = self.kwargs.get('pk', None)  # обращение к именованному аргументу pk, переданному по URL-адресу
         pdf = get_object_or_404(Reestr, id=objkey)  # Эта строка получает фактический объект модели pdf
-        fname = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
-        path = os.path.join(settings.MEDIA_ROOT, fname)  # полный путь к файлу
+        # if pdf.type_doc_id == 1:
+        file_name = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
+        # else:
+        #     file_name = pdf.y_contract + '\\' + pdf.num_contract + '.' + pdf.name_object + '.pdf'
+            # Папка год + имя файла + расширение
+        path = os.path.join(settings.MEDIA_ROOT, file_name)  # полный путь к файлу
         response = FileResponse(open(path, 'rb'), content_type="application/pdf")
-        response["Content-Disposition"] = "filename={}".format(fname)
+        response["Content-Disposition"] = "filename={}".format(file_name)
         return response
 
 
@@ -86,5 +99,17 @@ class ContractDopListView(ListView):
 
     queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
     template_name = 'main/contract_dop_list.html'
+    paginate_by = 10
+
+
+class ContractDopDetail(DetailView):
+    """ Информация о контракте """
+    model = Reestr
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        d_today = datetime.date.today()
+        context['d_today'] = d_today
+        return context
 
 
