@@ -13,6 +13,6 @@ urlpatterns = [
     path('dops/detail/<int:pk>/', DopDetail.as_view(), name='dop-detail'),
     path('search/', SearchResultsView.as_view(), name='search-results'),
     path('update/<int:pk>', ContractUpdateView.as_view(), name='contract-update'),
-    path('update/', ContractCreateView.as_view(), name='contract-create'),
+    path('create/', ContractCreateView.as_view(), name='contract-create'),
 ]
 

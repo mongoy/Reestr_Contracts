@@ -25,6 +25,11 @@
         <h1>Список пуст!</h1>
     {% endfor %}
 
+        <br>
+        <div class="row">
+            <div class="col"><a href="{% url 'contract-create' %}" class="btn btn-outline-danger my-1 my-sm-0" aria-disabled="true">Создать</a></div>
+        <div><br>
+
     {% block pagination %}
 
     {% if is_paginated %}

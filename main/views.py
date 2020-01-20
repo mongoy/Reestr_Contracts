@@ -145,7 +145,7 @@ class ContractCreateView(CreateView):
     """Заполнение аттрибутов дороги"""
     model = Reestr
     form_class = ContractCreatForm
-    success_url = reverse_lazy('road-list')
+    success_url = reverse_lazy('contract-list')
 
     def form_valid(self, form):
         result = super().form_valid(form)
