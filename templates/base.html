@@ -42,6 +42,11 @@
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Отмена </a>
           </li>
         </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Поиск ..." aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+        </form>
+
         {% if user.is_authenticated %}
             {% comment %}<a class="nav-item nav-link" href="{% url "profile" %}">Профиль {{ user.username }}</a>{% endcomment %}
             <a class="nav-item nav-link" href="{% url 'logout' %}">Выход</a>
@@ -50,10 +55,7 @@
             <a class="nav-item nav-link" href="{% url 'login' %}">Вход</a>
             {% comment %}<a class="nav-item nav-link" href="#">Регистрация</a>{% endcomment %}
         {% endif %}
-{% comment %}        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>{% endcomment %}
+{% comment %}{% endcomment %}
 
       </div>
     </nav>

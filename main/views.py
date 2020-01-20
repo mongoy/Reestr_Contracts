@@ -9,8 +9,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.views.generic.base import View
 from django.views.generic.detail import BaseDetailView
+from .forms import ContractCreatForm, ContractForm
 # пагинация
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
 
 from .models import Reestr
@@ -40,6 +40,7 @@ class ContractsListView(ListView):
     model = Reestr
     # рабочие контракты без допов
     queryset = Reestr.objects.all().filter(work_contract=True, type_doc=1)
+
     template_name = 'main/contract_list.html'
     paginate_by = 2
 
@@ -116,4 +117,39 @@ class DopDetail(DetailView):
         context['d_today'] = d_today
         return context
 
+
+class SearchResultsView(ListView):
+    model = Reestr
+
+
+class ContractUpdateView(UpdateView):
+    """Внесение изменений"""
+    model = Reestr
+    form_class = ContractForm
+    success_url = reverse_lazy('road-list')
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Reestr.objects.all()
+        else:
+            return Reestr.objects.none()
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.success(
+            self.request, '{}'.format(form.instance))
+        return result
+
+
+class ContractCreateView(CreateView):
+    """Заполнение аттрибутов дороги"""
+    model = Reestr
+    form_class = ContractCreatForm
+    success_url = reverse_lazy('road-list')
+
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        messages.success(
+            self.request, '{}'.format(form.instance))
+        return result
 
