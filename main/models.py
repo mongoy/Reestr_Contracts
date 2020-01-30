@@ -47,7 +47,7 @@ class Reestr(models.Model):
                                    default='-')
     num_contract = models.CharField(max_length=20, db_index=True, verbose_name='Номер контракта', default='-')
     name_object = models.CharField(max_length=500, db_index=True, verbose_name='Наименование объекта закупки',
-                                     default='-')
+                                   default='-')
     type_doc = models.ForeignKey(TypeDoc, on_delete=models.DO_NOTHING, verbose_name='Документ', default='-')
     y_contract = models.CharField(max_length=4, verbose_name='Год ввода', default='1970')
     nmck = models.FloatField(max_length=50, verbose_name='НМЦ')
@@ -64,7 +64,7 @@ class Reestr(models.Model):
     failures = models.BooleanField('Срыв сроков')
     executed = models.BooleanField('Исполнен')
     data_stamp = models.DateTimeField(auto_now_add=True)
-
+    # file_obj = models.FileField(upload_to='files/')
 
     def __str__(self):
         return self.num_contract
@@ -73,3 +73,7 @@ class Reestr(models.Model):
         verbose_name = "Госконтракт"
         verbose_name_plural = "Госконтракты"
         ordering = ('y_contract', 'num_contract',)  # сортировка
+
+# class FileContract(models.Model):
+#     #
+#     file_obj = models.FileField(upload_to='files/')

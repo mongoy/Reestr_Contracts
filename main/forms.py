@@ -22,3 +22,4 @@ class ContractCreatForm(forms.ModelForm):
         model = Reestr
         # fields = ['nregion', 'iroad', 'troad', 'innroad', 'inroad','proad']
         fields = '__all__'  # все поля
+        # fields = ['file_obj']
