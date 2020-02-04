@@ -2,13 +2,14 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(Reestr)
-class ReestrAdmin(admin.ModelAdmin):
+@admin.register(Contracts)
+class ContractAdmin(admin.ModelAdmin):
     """Перечень дорог"""
-    list_display = [field.name for field in Reestr._meta.fields]  # все поля выводит в цикле
+    list_display = [field.name for field in Contracts._meta.fields]  # все поля выводит в цикле
     search_fields = ["num_contract"]
     list_filter = ["num_contract", "y_contract"]
     list_per_page = 5  # кол-во записей на странице
+
 
 @admin.register(TypeDoc)
 class TypeDocAdmin(admin.ModelAdmin):
@@ -22,7 +23,8 @@ class InitiatorAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
     list_per_page = 10
 
-@admin.register(Status_Contract)
-class Status_ContractAdmin(admin.ModelAdmin):
+
+@admin.register(StatusContract)
+class StatusContractAdmin(admin.ModelAdmin):
     """ Статус контракта """
     list_display = ("id", "name")

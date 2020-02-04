@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h1>Поиск</h1>
+    <ul>
+        {% for contract in contracts_list %}
+            <li>
+                {{ contract.num_contract }}
+            </li>
+        {% endfor %}
 
+    </ul>
 {% endblock content %}

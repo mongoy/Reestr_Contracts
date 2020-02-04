@@ -13,7 +13,7 @@ from .forms import ContractCreatForm, ContractForm
 # пагинация
 from django.shortcuts import render, get_object_or_404
 
-from .models import Reestr
+from .models import Contracts
 from django.http import FileResponse, Http404
 
 
@@ -24,8 +24,8 @@ class ContractsInfoView(View):
     @staticmethod
     def get(request):
         # рабочие контракты без допов
-        info = Reestr.objects.all().filter(work_contract=True, type_doc=1).aggregate(Count('id', distinct=True), Sum('c_contract'))
-        qs = Reestr.objects.all().filter(work_contract=True, type_doc=1)
+        info = Contracts.objects.all().filter(work_contract=True, type_doc=1).aggregate(Count('id', distinct=True), Sum('c_contract'))
+        qs = Contracts.objects.all().filter(work_contract=True, type_doc=1)
         d_today = datetime.date.today()
         summ_ost = 0
         for rw in qs:
@@ -37,9 +37,9 @@ class ContractsInfoView(View):
 
 class ContractsListView(ListView):
     """ Перечень контрактов для просмотра """
-    model = Reestr
+    model = Contracts
     # рабочие контракты без допов
-    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=1)
+    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=1)
 
     template_name = 'main/contract_list.html'
     paginate_by = 2
@@ -47,16 +47,16 @@ class ContractsListView(ListView):
 
 class DopSListView(ListView):
     """ Перечень допов для просмотра """
-    model = Reestr
+    model = Contracts
     # рабочие допы
-    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
+    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
     template_name = 'main/dop_list.html'
     paginate_by = 5
 
 
 class ContractDetail(DetailView):
     """ Информация о контракте """
-    model = Reestr
+    model = Contracts
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,12 +69,12 @@ class ContractDetail(DetailView):
         # summ_ost = oroad - am_month * d_today.month
         context['summ_ost'] = 666
         objkey = self.kwargs.get('pk', None)
-        c_num = Reestr.objects.filter(work_contract=True, type_doc=1, id=objkey)
-        context['dops'] = Reestr.objects.filter(work_contract=True, type_doc=2, num_contract=c_num)
+        c_num = Contracts.objects.filter(work_contract=True, type_doc=1, id=objkey)
+        context['dops'] = Contracts.objects.filter(work_contract=True, type_doc=2, num_contract=c_num)
         # if self.request.user.is_authenticated:
         #     return context
         # else:
-        #     return Reestr.objects.none()
+        #     return Contracts.objects.none()
         return context
 
 
@@ -82,7 +82,7 @@ class DisplayPdfView(BaseDetailView):
     """ Вывод на экран скана контракта в формате PDF"""
     def get(self, request, *args, **kwargs):
         objkey = self.kwargs.get('pk', None)  # обращение к именованному аргументу pk, переданному по URL-адресу
-        pdf = get_object_or_404(Reestr, id=objkey)  # Эта строка получает фактический объект модели pdf
+        pdf = get_object_or_404(Contracts, id=objkey)  # Эта строка получает фактический объект модели pdf
         # if pdf.type_doc_id == 1:
         file_name = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
         # else:
@@ -96,22 +96,22 @@ class DisplayPdfView(BaseDetailView):
 
 class ContractDopListView(ListView):
     """ Перечень дополнительных соглашений к контрактам """
-    model = Reestr
+    model = Contracts
 
-    queryset = Reestr.objects.all().filter(work_contract=True, type_doc=2)
+    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
     template_name = 'main/contract_dop_list.html'
     paginate_by = 10
 
 
 class DopDetail(DetailView):
     """ Информация о допе """
-    model = Reestr
+    model = Contracts
     template_name = 'main/dop_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         objkey = self.kwargs.get('pk', None)
-        c_num = Reestr.objects.filter(work_contract=True, type_doc=2, id=objkey)
+        c_num = Contracts.objects.filter(work_contract=True, type_doc=2, id=objkey)
         context['num_gk'] = c_num[:5]
         d_today = datetime.date.today()
         context['d_today'] = d_today
@@ -119,20 +119,21 @@ class DopDetail(DetailView):
 
 
 class SearchResultsView(ListView):
-    model = Reestr
+    model = Contracts
+    template_name = 'main/search_results.html'
 
 
 class ContractUpdateView(UpdateView):
     """Внесение изменений"""
-    model = Reestr
+    model = Contracts
     form_class = ContractForm
     success_url = reverse_lazy('road-list')
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Reestr.objects.all()
+            return Contracts.objects.all()
         else:
-            return Reestr.objects.none()
+            return Contracts.objects.none()
 
     def form_valid(self, form):
         result = super().form_valid(form)
@@ -143,7 +144,7 @@ class ContractUpdateView(UpdateView):
 
 class ContractCreateView(CreateView):
     """Заполнение аттрибутов дороги"""
-    model = Reestr
+    model = Contracts
     form_class = ContractCreatForm
     success_url = reverse_lazy('contract-list')
 

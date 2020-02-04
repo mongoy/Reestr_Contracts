@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h1 class="mb-3">Государственный контракт: № &nbsp;{{ contracts.num_contract }}</h1>
+        <div class="card mb-1">
+
+            <p class="card-header"><strong>Наименование объекта : &nbsp; {{ contracts.name_object }}</strong></p>
+            <p class="card-header"><strong>Подрядчик : &nbsp; {{ contracts.uch_contract }} </strong></p>
+            <p class="card-header"><strong>Дата начала работ : &nbsp; {{ contracts.in_work }} г.</strong></p>
+            <p class="card-header"><strong>Дата окончания работ : &nbsp; {{ contracts.out_work }} г.</strong></p>
+            <p class="card-header"><strong>Дополнительные соглашения :</strong></p>
+{% comment %}             {% for dop in dops %}
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6" >
+                            <h6></h6>
+                        </div>
+
+                    </div>
+                </div>
+            {% empty %}
+                <h1>Список пуст!</h1>
+            {% endfor %}
+            <br>
+            <p class="card-header"><strong>по состоянию на {{ d_today }} </strong></p>
+            <br>
+
+{% comment %}            <p class="card-header">&nbsp;&nbsp;&nbsp; Балансовая : {{ road.broad }} руб. </p>
+            <p class="card-header">&nbsp;&nbsp;&nbsp; Остаточная : {{ summ_ost }} руб. </p>
+{% endcomment %}
+        </div><br><hr>
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-4"><a href="{% url 'contract-list' %}" class="btn btn-outline-success my-2 my-sm-0" aria-disabled="true">Перечень контрактов</a></div>
+        </div>
+    </div>
+{% endblock content %}

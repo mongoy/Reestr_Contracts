@@ -1,11 +1,11 @@
 from django import forms
-from .models import Reestr
+from .models import Contracts
 
 
 class ContractForm(forms.ModelForm):
     """Форма"""
     class Meta:
-        model = Reestr
+        model = Contracts
         #fields = ['nregion', 'iroad', 'troad', 'innroad', 'inroad','proad']
         fields = '__all__' #все поля
         # exclude = ['n'] #должны быть исключены из формы
@@ -19,7 +19,7 @@ class ContractCreatForm(forms.ModelForm):
     """Форма"""
 
     class Meta:
-        model = Reestr
+        model = Contracts
         # fields = ['nregion', 'iroad', 'troad', 'innroad', 'inroad','proad']
         fields = '__all__'  # все поля
         # fields = ['file_obj']
