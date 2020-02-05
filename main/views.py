@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.contrib import messages
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 from django.views.generic.base import View
@@ -24,7 +24,7 @@ class ContractsInfoView(View):
     @staticmethod
     def get(request):
         # рабочие контракты без допов
-        info = Contracts.objects.all().filter(work_contract=True, type_doc=1).aggregate(Count('id', distinct=True), Sum('c_contract'))
+        info = Contracts.objects.all().filter(work_contract=True).exclude(type_doc=3).aggregate(Count('id', distinct=True), Sum('c_contract'))
         qs = Contracts.objects.all().filter(work_contract=True, type_doc=1)
         d_today = datetime.date.today()
         summ_ost = 0
@@ -38,20 +38,20 @@ class ContractsInfoView(View):
 class ContractsListView(ListView):
     """ Перечень контрактов для просмотра """
     model = Contracts
-    # рабочие контракты без допов
-    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=1)
+    # рабочие контракты без КС
+    queryset = Contracts.objects.all().filter(work_contract=True).exclude(type_doc=3)
 
     template_name = 'main/contract_list.html'
-    paginate_by = 2
-
-
-class DopSListView(ListView):
-    """ Перечень допов для просмотра """
-    model = Contracts
-    # рабочие допы
-    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
-    template_name = 'main/dop_list.html'
     paginate_by = 5
+
+
+# class DopSListView(ListView):
+#     """ Перечень допов для просмотра """
+#     model = Contracts
+#     # рабочие допы
+#     queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
+#     template_name = 'main/dop_list.html'
+#     paginate_by = 5
 
 
 class ContractDetail(DetailView):
@@ -69,8 +69,8 @@ class ContractDetail(DetailView):
         # summ_ost = oroad - am_month * d_today.month
         context['summ_ost'] = 666
         objkey = self.kwargs.get('pk', None)
-        c_num = Contracts.objects.filter(work_contract=True, type_doc=1, id=objkey)
-        context['dops'] = Contracts.objects.filter(work_contract=True, type_doc=2, num_contract=c_num)
+        c_num = Contracts.objects.filter(work_contract=True, id=objkey).exclude(type_doc=3)
+        # context['dops'] = Contracts.objects.filter(work_contract=True, type_doc=2, num_contract=c_num)
         # if self.request.user.is_authenticated:
         #     return context
         # else:
@@ -84,7 +84,8 @@ class DisplayPdfView(BaseDetailView):
         objkey = self.kwargs.get('pk', None)  # обращение к именованному аргументу pk, переданному по URL-адресу
         pdf = get_object_or_404(Contracts, id=objkey)  # Эта строка получает фактический объект модели pdf
         # if pdf.type_doc_id == 1:
-        file_name = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
+        # file_name = pdf.y_contract + '\\' + pdf.num_contract + '.pdf'  # Папка год + имя файла + расширение
+        file_name = pdf.y_contract + '\\' + str(pdf.file_obj)  # Папка год + имя файла
         # else:
         #     file_name = pdf.y_contract + '\\' + pdf.num_contract + '.' + pdf.name_object + '.pdf'
             # Папка год + имя файла + расширение
@@ -94,40 +95,56 @@ class DisplayPdfView(BaseDetailView):
         return response
 
 
-class ContractDopListView(ListView):
-    """ Перечень дополнительных соглашений к контрактам """
-    model = Contracts
+# class ContractDopListView(ListView):
+#     """ Перечень дополнительных соглашений к контрактам """
+#     model = Contracts
+#
+#     queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
+#     template_name = 'main/contract_dop_list.html'
+#     paginate_by = 10
 
-    queryset = Contracts.objects.all().filter(work_contract=True, type_doc=2)
-    template_name = 'main/contract_dop_list.html'
-    paginate_by = 10
 
-
-class DopDetail(DetailView):
-    """ Информация о допе """
-    model = Contracts
-    template_name = 'main/dop_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        objkey = self.kwargs.get('pk', None)
-        c_num = Contracts.objects.filter(work_contract=True, type_doc=2, id=objkey)
-        context['num_gk'] = c_num[:5]
-        d_today = datetime.date.today()
-        context['d_today'] = d_today
-        return context
+# class DopDetail(DetailView):
+#     """ Информация о допе """
+#     model = Contracts
+#     template_name = 'main/dop_detail.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         objkey = self.kwargs.get('pk', None)
+#         c_num = Contracts.objects.filter(work_contract=True, type_doc=2, id=objkey)
+#         context['num_gk'] = c_num[:5]
+#         d_today = datetime.date.today()
+#         context['d_today'] = d_today
+#         return context
 
 
 class SearchResultsView(ListView):
     model = Contracts
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        # if query:
+        # Если q в GET запросе
+        object_list = Contracts.objects.filter(
+            Q(num_contract__icontains=query) | Q(name_object__icontains=query) | Q(uch_contract__icontains=query)
+        )
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
+
     template_name = 'main/search_results.html'
+    paginate_by = 5
 
 
 class ContractUpdateView(UpdateView):
     """Внесение изменений"""
     model = Contracts
     form_class = ContractForm
-    success_url = reverse_lazy('road-list')
+    success_url = reverse_lazy('contract-list')
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -143,7 +160,7 @@ class ContractUpdateView(UpdateView):
 
 
 class ContractCreateView(CreateView):
-    """Заполнение аттрибутов дороги"""
+    """Заполнение аттрибутов контракта"""
     model = Contracts
     form_class = ContractCreatForm
     success_url = reverse_lazy('contract-list')
