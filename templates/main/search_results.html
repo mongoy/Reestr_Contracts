@@ -2,7 +2,42 @@
 
 {% block content %}
 <h2 class="mb-3">Результат поиска :</h2><hr>
+    {% if contract_lists %}
+        {% for contract in contract_lists %}
+
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6" >
+                        <h6> № {{ contract.num_contract }}  ,  Цена: {{ contract.c_contract}}</h6><br>
+                        <h6> {{ contract.name_object }} </h6>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                        <div class="col-md-2"><a href="{% url 'con-pdf-view' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">ПДФ</a></div>
+                        <div class="col-md-2"><a href="{% url 'contract-update' contract.id %}" class="btn btn-sm btn-outline-danger my-2 my-sm-0" role="group" aria-disabled="true">Изменить</a></div>
+                    {% else %}
+                        <div class="col-md-2"><a href="{% url 'contract-detail' contract.id %}" class="btn btn-sm btn-outline-info my-2 my-sm-0" role="group" aria-disabled="true">Просмотр</a></div>
+                        <div class="col-md-2"></div>
+                    {% endif %}
+
+                </div>
+            </div>
+{% comment %}
+        {% empty %}
+            <h1>Список пуст!</h1>
+
+{% endcomment %}
+
+        {% endfor %}
+        {% load bootstrap4 %}
+        {% bootstrap_pagination contract_lists url=last_question %}
+    {% else %}
+        <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
+    {% endif %}
+
+{% comment %}
     {% for contract in contracts_list %}
+
         <div class="card-header">
             <div class="row">
                 <div class="col-md-6" >
@@ -33,7 +68,14 @@
             <br>
         {% endif %}
 
-    {% load bootstrap4 %}
-    {% bootstrap_pagination page_obj %}
+    {% block pagination %}
+        {% if is_paginated %}
+
+            {% load bootstrap4 %}
+            {% bootstrap_pagination page_obj %}
+
+        {% endif %}
+    {% endblock pagination%}
+{% endcomment %}
 
 {% endblock content %}

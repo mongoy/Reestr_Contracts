@@ -2,6 +2,7 @@ import datetime
 import os
 
 from django.conf import settings
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
@@ -119,25 +120,57 @@ class DisplayPdfView(BaseDetailView):
 #         return context
 
 
-class SearchResultsView(ListView):
-    model = Contracts
-
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        # if query:
-        # Если q в GET запросе
-        object_list = Contracts.objects.filter(
-            Q(num_contract__icontains=query) | Q(name_object__icontains=query) | Q(uch_contract__icontains=query)
-        )
-        return object_list
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q')
-        return context
-
+class SearchResultsView(View):
     template_name = 'main/search_results.html'
-    paginate_by = 5
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+
+        question = request.GET.get('q')
+        if question is not None: # поиск по номеру, названию и усастнику
+            search_contracts = Contracts.objects.filter(
+                Q(num_contract__icontains=question) |
+                Q(name_object__icontains=question) |
+                Q(uch_contract__icontains=question))
+
+            # формируем строку URL, которая будет содержать последний запрос
+            # Это важно для корректной работы пагинации
+            context['last_question'] = '?q=%s' % question
+
+            current_page = Paginator(search_contracts, 5)
+
+            page = request.GET.get('page')
+            try:
+                context['contract_lists'] = current_page.page(page)
+            except PageNotAnInteger:
+                context['contract_lists'] = current_page.page(1)
+            except EmptyPage:
+                context['contract_lists'] = current_page.page(current_page.num_pages)
+
+        return render(None, template_name=self.template_name, context=context)
+
+# class SearchResultsView(ListView):
+#     model = Contracts
+#     paginate_by = 5
+#     template_name = 'main/search_results.html'
+#
+#     def get_queryset(self):
+#         context = {}
+#
+#         query = self.request.GET.get('q')
+#         if query:  # Если q в GET запросе
+#             # формируем строку URL, которая будет содержать последний запрос
+#             # Это важно для корректной работы пагинации
+#             context['last_question'] = '?q=%s' % query
+#             object_list = Contracts.objects.filter(
+#                 Q(num_contract__icontains=query) | Q(name_object__icontains=query) | Q(uch_contract__icontains=query)
+#             )
+#         return object_list
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['query'] = self.request.GET.get('q')
+    #     return context
 
 
 class ContractUpdateView(UpdateView):
